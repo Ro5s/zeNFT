@@ -17,7 +17,7 @@ describe("zeNFT", function () {
 
   it("NFT has correct name and symbol", async function () {
     const NFT = await ethers.getContractFactory("zeNFT");
-    const nft = await NFT.deploy("ZEN", "ZEN", "zenft.farm/");
+    const nft = await NFT.deploy(name, symbol, baseURI);
     await nft.deployed();
 
     expect(await nft.name()).to.equal("ZEN");
