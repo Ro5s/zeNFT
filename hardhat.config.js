@@ -1,86 +1,83 @@
-/// ENVVAR
-// - CI:                output gas report to file instead of stdout
-// - COVERAGE:          enable coverage report
-// - ENABLE_GAS_REPORT: enable gas report
-// - COMPILE_MODE:      production modes enables optimizations (default: development)
-// - COMPILE_VERSION:   compiler version (default: 0.8.7)
-// - COINMARKETCAP:     coinmarkercat api key for USD value in gas report
+require("@nomiclabs/hardhat-waffle");
+require("hardhat-gas-reporter");
 
-const fs = require('fs');
-const path = require('path');
-const argv = require('yargs/yargs')()
-  .env('')
-  .options({
-    ci: {
-      type: 'boolean',
-      default: false,
-    },
-    coverage: {
-      type: 'boolean',
-      default: false,
-    },
-    gas: {
-      alias: 'enableGasReport',
-      type: 'boolean',
-      default: false,
-    },
-    mode: {
-      alias: 'compileMode',
-      type: 'string',
-      choices: [ 'production', 'development' ],
-      default: 'development',
-    },
-    compiler: {
-      alias: 'compileVersion',
-      type: 'string',
-      default: '0.8.7',
-    },
-    coinmarketcap: {
-      alias: 'coinmarketcapApiKey',
-      type: 'string',
-    },
-  })
-  .argv;
+// This is a sample Hardhat task. To learn how to create your own go to
+// https://hardhat.org/guides/create-task.html
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+  const accounts = await hre.ethers.getSigners();
 
-require('@nomiclabs/hardhat-truffle5');
+  for (const account of accounts) {
+    console.log(account.address);
+  }
+});
 
-if (argv.enableGasReport) {
-  require('hardhat-gas-reporter');
-}
-
-for (const f of fs.readdirSync(path.join(__dirname, 'hardhat'))) {
-  require(path.join(__dirname, 'hardhat', f));
-}
-
-const withOptimizations = argv.enableGasReport || argv.compileMode === 'production';
+// You need to export an object to set up your config
+// Go to https://hardhat.org/config/ to learn more
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: {
-    version: argv.compiler,
-    settings: {
-      optimizer: {
-        enabled: withOptimizations,
-        runs: 200,
-      },
+  defaultNetwork: "hardhat",
+  gasReporter: {
+    currency: "USD",
+    enabled: true,
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    alice: {
+      default: 1,
+    },
+    bob: {
+      default: 2,
+    },
+    carol: {
+      default: 3,
     },
   },
   networks: {
+    localhost: {
+      live: false,
+      saveDeployments: true,
+      tags: ["local"],
+    },
     hardhat: {
-      blockGasLimit: 10000000,
-      allowUnlimitedContractSize: !withOptimizations,
+      forking: {
+        enabled: true,
+        url: "https://eth-mainnet.alchemyapi.io/v2/zjx8baDblg7pbUjvc4zuRARLT28Ft2PC",
+        blockNumber: 12886725
+      },
+      allowUnlimitedContractSize: true,
+      live: false,
+      saveDeployments: true,
+      tags: ["test", "local"],
     },
   },
-  gasReporter: {
-    currency: 'USD',
-    outputFile: argv.ci ? 'gas-report.txt' : undefined,
-    coinmarketcap: argv.coinmarketcap,
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.7",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 999999,
+          },
+        },
+      },
+      {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 999999,
+          },
+        },
+      },
+    ],
+  },
+  mocha: {
+    timeout: 200000
   },
 };
-
-if (argv.coverage) {
-  require('solidity-coverage');
-  module.exports.networks.hardhat.initialBaseFeePerGas = 0;
-}
