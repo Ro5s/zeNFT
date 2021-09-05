@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 pragma solidity 0.8.7;
 /*
@@ -32,17 +32,9 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @dev {ERC721} token built on OpenZeppelin contracts (licensed under MIT), including:
- *
  *  - ability for holders to burn (destroy) their tokens
- *  - a minter role that allows for token minting (creation)
+ *  - public token minting (creation)
  *  - token ID and URI autogeneration
- *
- * This contract uses {AccessControl} to lock permissioned functions using the
- * different roles - head to its documentation for details.
- *
- * The account that deploys the contract will be granted the minter
- * role, as well as the default admin role, which will let it grant minter
- * roles to other accounts.
  */
 contract zeNFT is
     Context,
