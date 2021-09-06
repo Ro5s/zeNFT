@@ -88,11 +88,11 @@ contract zeNFT is
     }
     
     /**
-     * @dev Allows `owner` admin to claim NFT minting fees in ETH.
+     * @dev Allows `owner` admin to collect NFT minting fees in ETH.
      */
-    function claimETH() external nonReentrant onlyOwner {
+    function collectETH() external nonReentrant onlyOwner {
         (bool success, ) = msg.sender.call{value: address(this).balance}("");
-        require(success, "!payable");
+        require(success, "NOT_PAYABLE");
     }
 
     function _beforeTokenTransfer(
