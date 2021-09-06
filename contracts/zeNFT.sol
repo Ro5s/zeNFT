@@ -35,7 +35,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
  * @dev {ERC721} token built on OpenZeppelin contracts (licensed under MIT), including:
  *  - ability for holders to burn (destroy) their tokens
  *  - public token minting (creation) with ETH fee and capping options
- *  - Incremental token ID and URI autogeneration
+ *  - incremental token ID and URI autogeneration
  * @author @r_ross_campbell
  */
 contract zeNFT is
@@ -83,7 +83,7 @@ contract zeNFT is
     function mint() external nonReentrant payable {
         require(_tokenIdTracker.current() <= mintCap, "CAPPED"); // @dev Capped by token ID.
         require(msg.value == mintFee, "ETH_FEE_NOT_ATTACHED");
-        _mint(_msgSender(), _tokenIdTracker.current());
+        _safeMint(_msgSender(), _tokenIdTracker.current());
         _tokenIdTracker.increment();
     }
     
